@@ -1,8 +1,12 @@
+
 package com.example.springphoto.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.springphoto.model.Food;
@@ -14,7 +18,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class FoodService {
+
 	private final FoodRepository foodRepository;
+	private final MessageSource messageSource;
+
+	private String message(String key) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return messageSource.getMessage(key, null, locale);
+	}
 
 	public List<Food> getAllFoods(User user) {
 		return foodRepository.findByUserOrderByIdAsc(user);
@@ -22,27 +33,40 @@ public class FoodService {
 
 	public void saveFood(Food food, User user) {
 		food.setUser(user);
+
 		if (food.getQuantity() == null || food.getQuantity() < 1) {
-			throw new IllegalArgumentException("数量は1以上で入力してください");
+			throw new IllegalArgumentException(
+					message("error.quantityMustBeAtLeastOne"));
 		}
 
-		if (food.getNeedsRestock() == null)
+		if (food.getNeedsRestock() == null) {
 			food.setNeedsRestock(false);
+		}
+
 		foodRepository.save(food);
 	}
 
-	public Food updateFoodStatus(Long id, Integer quantity, Boolean needsRestock, LocalDate expiryDate, User user) {
-		Food food = foodRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Food not found"));
+	public Food updateFoodStatus(
+			Long id,
+			Integer quantity,
+			Boolean needsRestock,
+			LocalDate expiryDate,
+			User user) {
 
-		if (food.getUser() == null || user == null ||
-				food.getUser().getId().longValue() != user.getId().longValue()) {
-			throw new RuntimeException("権限がありません");
+		Food food = foodRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException(
+						message("error.foodNotFound")));
+
+		if (food.getUser() == null || user == null
+				|| food.getUser().getId().longValue()
+				!= user.getId().longValue()) {
+			throw new RuntimeException(message("error.forbidden"));
 		}
 
 		if (quantity != null) {
 			if (quantity < 0) {
-				throw new IllegalArgumentException("0より小さい値は入力できません");
+				throw new IllegalArgumentException(
+						message("validation.quantityMin"));
 			}
 			food.setQuantity(quantity);
 		}
@@ -60,11 +84,15 @@ public class FoodService {
 
 	public void deleteFood(Long id, User user) {
 		Food food = foodRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Food not found"));
-		if (food.getUser() == null || user == null ||
-				food.getUser().getId().longValue() != user.getId().longValue()) {
-			throw new RuntimeException("他人の食材は削除できません");
+				.orElseThrow(() -> new RuntimeException(
+						message("error.foodNotFound")));
+
+		if (food.getUser() == null || user == null
+				|| food.getUser().getId().longValue()
+				!= user.getId().longValue()) {
+			throw new RuntimeException(message("error.forbidden"));
 		}
+
 		foodRepository.deleteById(id);
 	}
 }

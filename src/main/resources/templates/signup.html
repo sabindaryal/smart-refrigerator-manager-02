@@ -1,44 +1,109 @@
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:lang="${#locale.language}">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>新規ユーザー登録 - スマート冷蔵庫管理</title>
+
+	<title th:text="#{auth.signup} + ' - ' + #{app.title}">
+		Create Account - Smart Refrigerator Manager
+	</title>
+
 	<link rel="stylesheet" th:href="@{/css/style.css}">
 
 	<link rel="apple-touch-icon" href="/images/reizo-ko.png?v=3">
 	<link rel="apple-touch-icon" sizes="180x180" href="/images/reizo-ko.png?v=3">
 	<link rel="icon" type="image/png" href="/images/reizo-ko.png">
+
 	<meta name="apple-mobile-web-app-title" content="冷蔵庫管理">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 
 <body>
-	<div class="container">
-		<div class="form-card">
-			<h1>新規ユーザー登録</h1>
-			<div th:if="${errorMessage}" class="alert-danger">
-				<span th:text="${errorMessage}"></span>
-			</div>
-			<form th:action="@{/signup}" method="post">
-				<div class="form-group">
-					<label>ユーザー名</label>
-					<input type="text" name="username" required placeholder="新しいユーザー名">
-				</div>
-				<div class="form-group">
-					<label>パスワード</label>
-					<input type="password" name="password" required placeholder="新しいパスワード">
-				</div>
-				<button type="submit" class="full-width-btn">アカウントを作成する</button>
-			</form>
 
-			<div class="link-area">
-				<p>すでにアカウントをお持ちですか？</p>
-				<a th:href="@{/login}" class="secondary-btn">ログイン画面に戻る</a>
-			</div>
-		</div>
+<div class="container">
+
+	<div class="language-selector">
+		<label for="languageSelect">Language / 言語 / भाषा:</label>
+
+		<select id="languageSelect"
+				onchange="window.location.href='/signup?lang=' + this.value">
+
+			<option value="en" th:selected="${#locale.language == 'en'}">
+				English
+			</option>
+
+			<option value="ja" th:selected="${#locale.language == 'ja'}">
+				日本語
+			</option>
+
+			<option value="ne" th:selected="${#locale.language == 'ne'}">
+				नेपाली
+			</option>
+
+		</select>
 	</div>
-</body>
 
+	<div class="form-card">
+
+		<h1 th:text="#{auth.signup}">Create Account</h1>
+
+		<div th:if="${errorMessage}" class="alert-danger">
+			<span th:text="${errorMessage}"></span>
+		</div>
+
+		<form th:action="@{/signup}" method="post">
+
+			<div class="form-group">
+				<label for="username" th:text="#{auth.username}">
+					Username
+				</label>
+
+				<input type="text"
+					   id="username"
+					   name="username"
+					   required
+					   th:placeholder="#{auth.username}"
+					   placeholder="Username">
+			</div>
+
+			<div class="form-group">
+				<label for="password" th:text="#{auth.password}">
+					Password
+				</label>
+
+				<input type="password"
+					   id="password"
+					   name="password"
+					   required
+					   th:placeholder="#{auth.password}"
+					   placeholder="Password">
+			</div>
+
+			<button type="submit"
+					class="full-width-btn"
+					th:text="#{auth.signup}">
+				Create Account
+			</button>
+
+		</form>
+
+		<div class="link-area">
+			<p th:text="#{auth.haveAccount}">
+				Already have an account?
+			</p>
+
+			<a th:href="@{/login}"
+			   class="secondary-btn"
+			   th:text="#{auth.login}">
+				Login
+			</a>
+		</div>
+
+	</div>
+</div>
+
+</body>
 </html>

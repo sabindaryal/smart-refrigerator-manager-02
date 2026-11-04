@@ -1,3 +1,4 @@
+
 package com.example.springphoto.model;
 
 import java.time.LocalDate;
@@ -24,21 +25,22 @@ import lombok.Data;
 @Table(name = "foods")
 @Data
 public class Food {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotBlank(message = "食材名は必須です")
-	@Size(max = 50, message = "食材名は50文字以内で入力してください")
+	@NotBlank(message = "{validation.foodNameRequired}")
+	@Size(max = 50, message = "{validation.foodNameMax}")
 	private String name;
 
-	@NotNull(message = "期限は必須です")
+	@NotNull(message = "{validation.expiryRequired}")
 	private LocalDate expiryDate;
 
 	private String category;
 
-	@NotNull(message = "数量は必須です")
-	@Min(value = 0, message = "0より小さい値は入力できません")
+	@NotNull(message = "{validation.quantityRequired}")
+	@Min(value = 0, message = "{validation.quantityMin}")
 	private Integer quantity;
 
 	private Boolean needsRestock = false;
@@ -49,35 +51,31 @@ public class Food {
 	private User user;
 
 	private Long getDaysUntilExpiry() {
-		if (this.expiryDate == null)
+		if (this.expiryDate == null) {
 			return null;
-		return ChronoUnit.DAYS.between(LocalDate.now(), this.expiryDate);
+		}
+
+		return ChronoUnit.DAYS.between(
+				LocalDate.now(),
+				this.expiryDate
+		);
 	}
 
 	public String getStatus() {
 		Long diffDays = getDaysUntilExpiry();
-		if (diffDays == null)
+
+		if (diffDays == null) {
 			return "safe";
-		if (diffDays <= 0)
+		}
+
+		if (diffDays <= 0) {
 			return "danger";
-		if (diffDays <= 3)
+		}
+
+		if (diffDays <= 3) {
 			return "warning";
+		}
 
 		return "safe";
-	}
-
-	public String getStatusMessage() {
-		if (this.quantity != null && this.quantity <= 0)
-			return "在庫がなくなりました！";
-
-		Long diffDays = getDaysUntilExpiry();
-		if (diffDays == null)
-			return "";
-		if (diffDays <= 0)
-			return "期限切れ！急いで！";
-		if (diffDays <= 3)
-			return "そろそろ危ない（あと" + diffDays + "日以内）";
-
-		return "あと " + diffDays + " 日";
 	}
 }

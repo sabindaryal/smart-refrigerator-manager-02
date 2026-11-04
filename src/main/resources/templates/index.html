@@ -1,77 +1,180 @@
+
 <!DOCTYPE html>
-<html lang="ja">
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:lang="${#locale.language}">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>スマート冷蔵庫管理</title>
-	<link rel="stylesheet" href="css/style.css">
 
+	<title th:text="#{app.title}">Smart Refrigerator Manager</title>
+
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 	<link rel="apple-touch-icon" href="/images/reizo-ko.png?v=3">
 	<link rel="apple-touch-icon" sizes="180x180" href="/images/reizo-ko.png?v=3">
 	<link rel="icon" type="image/png" href="/images/reizo-ko.png">
-	<meta name="apple-mobile-web-app-title" content="冷蔵庫管理">
+
+	<meta name="apple-mobile-web-app-title" content="Smart Refrigerator">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	
-	<meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
-	<meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}"/>
-	
+
+	<meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
+	<meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}">
 </head>
 
 <body>
-	<div id="auth-section">
-		<div class="auth-container">
-			<div id="user-info" class="user-profile" style="display: none;">
-				<div class="user-status">
-					<span class="user-avatar">👤</span>
-					<span id="display-username" class="username"></span>
-					<span class="welcome-msg">さん、こんにちは！</span>
-				</div>
-				<button onclick="handleLogout()" class="logout-btn">ログアウト</button>
+
+<div id="auth-section">
+	<div class="auth-container">
+
+		<div id="user-info" class="user-profile" style="display: none;">
+			<div class="user-status">
+				<span class="user-avatar">👤</span>
+				<span id="display-username" class="username"></span>
+				<span class="welcome-msg" th:text="#{app.welcome}"></span>
 			</div>
+
+			<button onclick="handleLogout()"
+					class="logout-btn"
+					th:text="#{app.logout}">
+				Logout
+			</button>
 		</div>
+
+		<div class="language-selector">
+			<label for="languageSelect" th:text="#{common.language}">Language</label>
+
+			<select id="languageSelect"
+					onchange="window.location.href='/?lang=' + this.value">
+				<option value="en" th:selected="${#locale.language == 'en'}">English</option>
+				<option value="ja" th:selected="${#locale.language == 'ja'}">日本語</option>
+				<option value="ne" th:selected="${#locale.language == 'ne'}">नेपाली</option>
+			</select>
+		</div>
+
 	</div>
-	<div class="container">
-		<h1>🧊 スマート冷蔵庫管理</h1>
+</div>
 
-		<div class="stats-section">
-			現在の食材数：<span id="totalCount">0</span>件
-		</div>
+<div class="container">
 
-		<div class="search-section">
-			<input type="text" id="searchInput" placeholder="食材名またはカテゴリーで検索..." oninput="filterFoods()">
-			<div class="filter-options">
-				<label><input type="checkbox" id="filterRestock" onchange="filterFoods()"> 買い増し対象</label>
-				<label><input type="checkbox" id="filterNoStock" onchange="filterFoods()"> 在庫なし</label>
-				<label><input type="checkbox" id="filterWarning" onchange="filterFoods()"> ⚠️そろそろ危ない</label>
-				<label><input type="checkbox" id="filterDanger" onchange="filterFoods()"> 🚨期限切れ</label>
-			</div>
-		</div>
+	<h1 th:text="#{app.dashboard}">Smart Refrigerator Manager</h1>
 
-		<div id="add-form-container" class="form-section" style="display: none;">
-			<h2>新しい食材を追加</h2>
-			<div class="add-form">
-				<input type="text" id="foodName" placeholder="食材名（例：牛乳）">
-				<input type="number" id="addQuantity" value="1" min="0">
-				<input type="date" id="expiryDate">
-
-				<select id="category">
-					<option value="野菜">野菜</option>
-					<option value="肉・魚">肉・魚</option>
-					<option value="調味料">調味料</option>
-					<option value="乳製品">乳製品</option>
-					<option value="パン・ご飯">パン・ご飯</option>
-					<option value="果物">果物</option>
-					<option value="その他">その他</option>
-				</select>
-				<button onclick="addFood()" class="add-btn">追加</button>
-			</div>
-		</div>
-		<div id="foodList" class="food-grid">
-		</div>
+	<div class="stats-section">
+		<span th:text="#{dashboard.totalFoods}">Total foods</span>:
+		<span id="totalCount">0</span>
 	</div>
 
-	<script src="js/app.js"></script>
+	<div class="search-section">
+
+		<input type="text"
+			   id="searchInput"
+			   th:placeholder="#{common.search}"
+			   oninput="filterFoods()">
+
+		<div class="filter-options">
+
+			<label>
+				<input type="checkbox" id="filterRestock"
+					   onchange="filterFoods()">
+				<span th:text="#{filter.restock}">Restock</span>
+			</label>
+
+			<label>
+				<input type="checkbox" id="filterNoStock"
+					   onchange="filterFoods()">
+				<span th:text="#{filter.noStock}">Out of stock</span>
+			</label>
+
+			<label>
+				<input type="checkbox" id="filterWarning"
+					   onchange="filterFoods()">
+				<span th:text="#{filter.warning}">Expiring soon</span>
+			</label>
+
+			<label>
+				<input type="checkbox" id="filterDanger"
+					   onchange="filterFoods()">
+				<span th:text="#{filter.expired}">Expired</span>
+			</label>
+
+		</div>
+	</div>
+
+	<div id="add-form-container"
+		 class="form-section"
+		 style="display: none;">
+
+		<h2 th:text="#{food.add}">Add new food</h2>
+
+		<div class="add-form">
+
+			<input type="text"
+				   id="foodName"
+				   th:placeholder="#{food.name}">
+
+			<input type="number"
+				   id="addQuantity"
+				   value="1"
+				   min="0"
+				   th:placeholder="#{food.quantity}">
+
+			<input type="date" id="expiryDate">
+
+			<select id="category">
+				<option value="野菜" th:text="#{category.vegetables}">Vegetables</option>
+				<option value="肉・魚" th:text="#{category.meatFish}">Meat and fish</option>
+				<option value="調味料" th:text="#{category.condiments}">Condiments</option>
+				<option value="乳製品" th:text="#{category.dairy}">Dairy</option>
+				<option value="パン・ご飯" th:text="#{category.breadRice}">Bread and rice</option>
+				<option value="果物" th:text="#{category.fruit}">Fruit</option>
+				<option value="その他" th:text="#{category.other}">Other</option>
+			</select>
+
+			<button onclick="addFood()"
+					class="add-btn"
+					th:text="#{common.add}">
+				Add
+			</button>
+
+		</div>
+	</div>
+
+	<div id="foodList" class="food-grid"></div>
+
+</div>
+
+<script th:inline="javascript">
+	window.appMessages = {
+		noFoods: /*[[#{food.noFoods}]]*/ 'No food items found',
+		quantityMustBeAtLeastOne: /*[[#{error.quantityMustBeAtLeastOne}]]*/ 'Quantity must be at least 1',
+		categoryVegetables: /*[[#{category.vegetables}]]*/ 'Vegetables',
+		categoryMeatFish: /*[[#{category.meatFish}]]*/ 'Meat and fish',
+		categoryCondiments: /*[[#{category.condiments}]]*/ 'Condiments',
+		categoryDairy: /*[[#{category.dairy}]]*/ 'Dairy',
+		categoryBreadRice: /*[[#{category.breadRice}]]*/ 'Bread and rice',
+		categoryFruit: /*[[#{category.fruit}]]*/ 'Fruit',
+		categoryOther: /*[[#{category.other}]]*/ 'Other',
+		logoutConfirm: /*[[#{auth.logoutConfirm}]]*/ 'Are you sure you want to log out?',
+		authError: /*[[#{message.operationFailed}]]*/ 'Authentication failed',
+		stockEmpty: /*[[#{status.noStock}]]*/ 'Out of stock',
+		restock: /*[[#{filter.restock}]]*/ 'Restock',
+		expiryLabel: /*[[#{food.expiryDate}]]*/ 'Expiry date',
+		updateExpiry: /*[[#{food.update}]]*/ 'Update expiry',
+		quantityLabel: /*[[#{food.quantity}]]*/ 'Quantity',
+		delete: /*[[#{common.delete}]]*/ 'Delete',
+		addFoodRequired: /*[[#{validation.foodNameRequired}]]*/ 'Enter a food name',
+		expiryRequired: /*[[#{validation.expiryRequired}]]*/ 'Select an expiry date',
+		pastDate: /*[[#{message.operationFailed}]]*/ 'Past dates are not allowed',
+		networkError: /*[[#{message.networkError}]]*/ 'Network error',
+		quantityMin: /*[[#{validation.quantityMin}]]*/ 'Quantity cannot be negative',
+		dateRequired: /*[[#{validation.expiryRequired}]]*/ 'Select a date',
+		deleteConfirm: /*[[#{food.deleteConfirm}]]*/ 'Delete this food?',
+		statusSafe: /*[[#{status.safe}]]*/ 'Safe',
+		statusWarning: /*[[#{status.warning}]]*/ 'Expiring soon',
+		statusDanger: /*[[#{status.danger}]]*/ 'Expired'
+	};
+</script>
+
+<script th:src="@{/js/app.js}"></script>
+
 </body>
-
 </html>

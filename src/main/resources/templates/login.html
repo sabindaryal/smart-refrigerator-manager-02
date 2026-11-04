@@ -1,50 +1,115 @@
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:lang="${#locale.language}">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>ログイン - スマート冷蔵庫管理</title>
+
+	<title th:text="#{auth.login} + ' - ' + #{app.title}">
+		Login - Smart Refrigerator Manager
+	</title>
+
 	<link rel="stylesheet" th:href="@{/css/style.css}">
-	
+
 	<link rel="apple-touch-icon" href="/images/reizo-ko.png?v=3">
 	<link rel="apple-touch-icon" sizes="180x180" href="/images/reizo-ko.png?v=3">
 	<link rel="icon" type="image/png" href="/images/reizo-ko.png">
+
 	<meta name="apple-mobile-web-app-title" content="冷蔵庫管理">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 
 <body>
-	<div class="container">
-		<div class="form-card">
-			<h1>ログイン</h1>
 
-			<div th:if="${param.error}" class="alert-danger">
-				ユーザー名またはパスワードが正しくありません。
-			</div>
+<div class="container">
 
-			<div th:if="${param.signup_success}" class="success-msg">
-				登録が完了しました。ログインしてください。
-			</div>
+	<div class="language-selector">
+		<label for="languageSelect">Language / 言語 / भाषा:</label>
 
-			<form th:action="@{/login}" method="post">
-				<div class="form-group">
-					<label>ユーザー名</label>
-					<input type="text" name="username" required placeholder="ユーザー名を入力">
-				</div>
-				<div class="form-group">
-					<label>パスワード</label>
-					<input type="password" name="password" required placeholder="パスワードを入力">
-				</div>
-				<button type="submit" class="full-width-btn">ログイン</button>
-			</form>
+		<select id="languageSelect"
+				onchange="window.location.href='/login?lang=' + this.value">
 
-			<div class="link-area">
-				<p>アカウントをお持ちでないですか？</p>
-				<a th:href="@{/signup}" class="secondary-btn">新規ユーザー登録</a>
-			</div>
-		</div>
+			<option value="en" th:selected="${#locale.language == 'en'}">
+				English
+			</option>
+
+			<option value="ja" th:selected="${#locale.language == 'ja'}">
+				日本語
+			</option>
+
+			<option value="ne" th:selected="${#locale.language == 'ne'}">
+				नेपाली
+			</option>
+
+		</select>
 	</div>
-</body>
 
+	<div class="form-card">
+
+		<h1 th:text="#{auth.login}">Login</h1>
+
+		<div th:if="${param.error}" class="alert-danger"
+			 th:text="#{auth.invalidCredentials}">
+			Invalid username or password.
+		</div>
+
+		<div th:if="${param.signup_success}" class="success-msg"
+			 th:text="#{auth.loginSuccess}">
+			Account created successfully. Please log in.
+		</div>
+
+		<form th:action="@{/login}" method="post">
+
+			<div class="form-group">
+				<label for="username" th:text="#{auth.username}">
+					Username
+				</label>
+
+				<input type="text"
+					   id="username"
+					   name="username"
+					   required
+					   th:placeholder="#{auth.username}"
+					   placeholder="Username">
+			</div>
+
+			<div class="form-group">
+				<label for="password" th:text="#{auth.password}">
+					Password
+				</label>
+
+				<input type="password"
+					   id="password"
+					   name="password"
+					   required
+					   th:placeholder="#{auth.password}"
+					   placeholder="Password">
+			</div>
+
+			<button type="submit"
+					class="full-width-btn"
+					th:text="#{auth.login}">
+				Login
+			</button>
+
+		</form>
+
+		<div class="link-area">
+			<p th:text="#{auth.noAccount}">
+				Don't have an account?
+			</p>
+
+			<a th:href="@{/signup}"
+			   class="secondary-btn"
+			   th:text="#{auth.signup}">
+				Create Account
+			</a>
+		</div>
+
+	</div>
+</div>
+
+</body>
 </html>

@@ -1,310 +1,496 @@
-/* --- 基本設定 --- */
+
+/* ================================
+   GLOBAL
+================================ */
+
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	--primary: #2563eb;
+	--primary-dark: #1d4ed8;
+	--background: #f5f7fb;
+	--surface: #ffffff;
+	--text: #172033;
+	--muted: #64748b;
+	--border: #e2e8f0;
+	--success: #16a34a;
+	--warning: #d97706;
+	--danger: #dc2626;
+	--radius: 14px;
+}
+
 body {
-	font-family: 'Helvetica Neue', Arial, sans-serif;
-	background-color: #f0f8ff;
+	font-family: Inter, -apple-system, BlinkMacSystemFont,
+	"Segoe UI", Arial, sans-serif;
+	background: var(--background);
+	color: var(--text);
 	margin: 0;
-	padding: 0;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 }
 
-.container {
-	max-width: 600px;
-	width: 90%;
-	margin: auto;
-	padding: 20px 0;
-}
+/* ================================
+   HEADER
+================================ */
 
-/* --- 入力フォーム・ボタン（共通） --- */
-input[type="text"],
-input[type="password"],
-input[type="number"],
-input[type="date"],
-select,
-button {
-	width: 100%;
-	height: 48px;
-	padding: 10px;
-	font-size: 16px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	box-sizing: border-box;
-	background-color: white;
-	-webkit-appearance: none;
-	color: #333;
-}
-
-button {
-	background-color: #4CAF50;
-	color: white;
-	border: none;
-	cursor: pointer;
-	font-weight: bold;
-	transition: background-color 0.3s;
-}
-
-button:hover {
-	background-color: #45a049;
-}
-
-/* --- 日付入力欄（特殊設定：年/月/日 プレースホルダー） --- */
-input[type="date"] {
-	position: relative;
-	cursor: pointer;
-}
-
-input[type="date"]::before {
-	content: "年 / 月 / 日";
-	color: #999;
-	position: absolute;
-	left: 10px;
-	top: 50%;
-	transform: translateY(-50%);
-	pointer-events: none;
-	z-index: 1;
-}
-
-input[type="date"].has-value::before {
-	display: none !important;
-}
-
-input[type="date"]:not(.has-value) {
-	color: transparent;
-}
-
-input[type="date"].has-value {
-	color: #333;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	cursor: pointer;
-	background: transparent;
-	color: transparent;
-	z-index: 2;
-}
-
-/* --- セクション・カード基本 --- */
-.form-section {
-	background: white;
-	padding: 15px 20px;
-	border-radius: 10px;
-	margin-bottom: 30px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.form-section h2 {
-	margin-top: 0;
-	margin-bottom: 15px;
-	font-size: 20px;
-}
-
-.form-card {
-	background: white;
-	padding: 40px;
-	border-radius: 8px;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-	text-align: center;
-}
-
-/* --- ログイン・新規登録画面用（追加） --- */
-.form-group {
-	margin-bottom: 8px;
-	text-align: left;
-}
-
-.form-group label {
-	display: block;
-	margin-bottom: 4px;
-	font-weight: bold;
-	color: #333;
-}
-
-.link-area {
-	margin-top: 30px;
-	border-top: 1px solid #eee;
-	padding-top: 20px;
-}
-
-.alert-danger {
-	background-color: #fff5f5;
-	color: #ff4d4d;
-	border: 1px solid #ff4d4d;
-	padding: 10px;
-	border-radius: 5px;
-	margin-bottom: 15px;
-	font-size: 14px;
-	text-align: center;
-}
-
-/* --- 追加フォームのレイアウト --- */
-.add-form {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	gap: 10px;
-}
-
-@media (min-width: 600px) {
-	.add-form {
-		flex-direction: row;
-		align-items: center;
-	}
-
-	.add-form input,
-	.add-form select,
-	.add-form button {
-		flex: 1;
-	}
-}
-
-/* --- 検索・統計 --- */
-.search-section {
-	margin-bottom: 20px;
-}
-
-#searchInput {
-	width: 100%;
-	max-width: 400px;
-	padding: 12px 20px;
-	font-size: 16px;
-	border: 2px solid #ddd;
-	border-radius: 25px;
-	outline: none;
-}
-
-#searchInput:focus {
-	border-color: #3498db;
-}
-
-.stats-section {
-	background-color: #e3f2fd;
-	padding: 10px 20px;
-	border-radius: 20px;
-	display: inline-block;
-	margin-bottom: 20px;
-	font-weight: bold;
-	color: #1976d2;
-}
-
-/* --- 食材カード表示 --- */
-.food-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 20px;
-}
-
-.food-card {
-	background: white;
-	padding: 15px;
-	border-radius: 8px;
-	border-left: 8px solid #ddd;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.danger {
-	border-left-color: #ff4d4d;
-	background-color: #fff5f5;
-}
-
-.warning {
-	border-left-color: #ffad33;
-	background-color: #fffaf0;
-}
-
-.safe {
-	border-left-color: #2ecc71;
-}
-
-.quantity-control {
-	margin: 15px 0;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	justify-content: flex-start;
-}
-
-.quantity-control input[type="number"] {
-	width: 70px !important;
-	height: 36px;
-	text-align: center;
-}
-
-.delete-btn {
-	margin-top: 10px;
-	background: #ff7675;
-	padding: 5px 10px;
-	height: auto;
-	/* ボタン共通の48pxを上書き */
-}
-
-/* カード内の「日付の更新」入力欄 */
-.edit-date {
-	flex-grow: 1;
-	padding: 5px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-}
-
-.edit-date::before {
-	content: "日付の更新";
-	color: #666;
-}
-
-.edit-date.has-value,
-.edit-date:focus {
-	color: #333 !important;
-}
-
-.save-date-btn {
-	padding: 5px 10px;
-	background-color: #28a745;
-	/* 成功・保存をイメージする緑 */
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 14px;
-	white-space: nowrap;
-}
-
-.save-date-btn:active {
-	background-color: #218838;
-	transform: translateY(1px);
-}
-
-/* --- ヘッダー・認証 --- */
 #auth-section {
-	background-color: #f8f9fa;
-	border-bottom: 1px solid #dee2e6;
-	padding: 10px 20px;
+	background: var(--surface);
+	border-bottom: 1px solid var(--border);
+	padding: 16px 5%;
 }
 
 .auth-container {
 	max-width: 1200px;
-	margin: 0 auto;
+	margin: auto;
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
+	gap: 16px;
 }
 
 .user-profile {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	height: 36px;
+	height: auto;
+}
+
+.user-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.user-avatar {
+	font-size: 20px;
+}
+
+.username {
+	font-weight: 700;
+}
+
+.welcome-msg {
+	color: var(--muted);
+}
+
+.language-selector {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.language-selector label {
+	color: var(--muted);
+	font-size: 14px;
+}
+
+.language-selector select {
+	width: auto;
+	min-width: 110px;
 }
 
 .logout-btn {
-	background-color: #f44336;
-	height: 36px;
-	font-size: 14px;
 	width: auto;
-	height: auto;
+	height: 38px;
+	padding: 0 16px;
+	background: #fee2e2;
+	color: #b91c1c;
+	font-size: 14px;
+}
+
+/* ================================
+   MAIN CONTAINER
+================================ */
+
+.container {
+	width: min(1200px, 92%);
+	margin: 0 auto;
+	padding: 36px 0 60px;
+}
+
+.container h1 {
+	font-size: clamp(26px, 4vw, 34px);
+	letter-spacing: -0.8px;
+	margin: 0 0 28px;
+	font-weight: 800;
+}
+
+/* ================================
+   INPUTS AND BUTTONS
+================================ */
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+button {
+	font-family: inherit;
+	font-size: 14px;
+	border-radius: 10px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select {
+	width: 100%;
+	min-height: 46px;
+	padding: 11px 14px;
+	border: 1px solid var(--border);
+	background: var(--surface);
+	color: var(--text);
+	outline: none;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+button {
+	min-height: 44px;
+	padding: 10px 18px;
+	border: none;
+	background: var(--primary);
+	color: white;
+	cursor: pointer;
+	font-weight: 600;
+	transition: background 0.2s, transform 0.2s;
+}
+
+button:hover {
+	background: var(--primary-dark);
+}
+
+button:active {
+	transform: translateY(1px);
+}
+
+/* ================================
+   STATISTICS
+================================ */
+
+.stats-section {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 13px 18px;
+	margin-bottom: 24px;
+	background: #eff6ff;
+	color: #1d4ed8;
+	border: 1px solid #dbeafe;
+	border-radius: 12px;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+/* ================================
+   SEARCH AND FILTERS
+================================ */
+
+.search-section {
+	background: var(--surface);
+	padding: 22px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	margin-bottom: 26px;
+	box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
+}
+
+#searchInput {
+	max-width: 100%;
+	border-radius: 10px;
+	padding: 13px 16px;
+}
+
+.filter-options {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.filter-options label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 13px;
+	background: #f8fafc;
+	border: 1px solid var(--border);
+	border-radius: 9px;
+	font-size: 13px;
+	color: #475569;
+	cursor: pointer;
+}
+
+.filter-options input {
+	accent-color: var(--primary);
+	cursor: pointer;
+}
+
+/* ================================
+   ADD FOOD FORM
+================================ */
+
+.form-section {
+	background: var(--surface);
+	padding: 24px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	margin-bottom: 28px;
+	box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.form-section h2 {
+	margin: 0 0 20px;
+	font-size: 20px;
+}
+
+.add-form {
+	display: grid;
+	grid-template-columns: 2fr 0.8fr 1.3fr 1.2fr auto;
+	align-items: end;
+	gap: 12px;
+}
+
+.add-form button {
+	white-space: nowrap;
+}
+
+.add-form input,
+.add-form select {
+	min-width: 0;
+}
+
+/* Date labels */
+
+.date-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	min-width: 0;
+}
+
+.date-field label {
+	color: var(--muted);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+/* ================================
+   FOOD GRID
+================================ */
+
+.food-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 18px;
+}
+
+.food-card {
+	background: var(--surface);
+	padding: 20px;
+	border: 1px solid var(--border);
+	border-left: 5px solid #cbd5e1;
+	border-radius: var(--radius);
+	box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.food-card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 9px 22px rgba(15, 23, 42, 0.08);
+}
+
+.food-card.danger {
+	border-left-color: var(--danger);
+	background: #fffafa;
+}
+
+.food-card.warning {
+	border-left-color: var(--warning);
+	background: #fffdf7;
+}
+
+.food-card.safe {
+	border-left-color: var(--success);
+}
+
+.food-card h3 {
+	margin-top: 0;
+	font-size: 18px;
+}
+
+/* ================================
+   QUANTITY AND DATE CONTROLS
+================================ */
+
+.quantity-control {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+	margin: 15px 0;
+}
+
+.quantity-control input[type="number"] {
+	width: 85px !important;
+	min-height: 38px;
+	text-align: center;
+}
+
+.date-edit-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.edit-date {
+	flex: 1;
+	min-width: 0;
+}
+
+.save-date-btn {
+	width: auto;
+	min-height: 40px;
+	padding: 8px 12px;
+	background: var(--success);
+	font-size: 13px;
+}
+
+.save-date-btn:hover {
+	background: #15803d;
+}
+
+.delete-btn {
+	width: 100%;
+	min-height: 40px;
+	margin-top: 12px;
+	background: #fee2e2;
+	color: #b91c1c;
+}
+
+.delete-btn:hover {
+	background: #fecaca;
+}
+
+/* ================================
+   LOGIN AND SIGNUP
+================================ */
+
+.form-card {
+	background: var(--surface);
+	padding: 36px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+	text-align: center;
+}
+
+.form-group {
+	margin-bottom: 16px;
+	text-align: left;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 7px;
+	font-weight: 600;
+	color: var(--text);
+}
+
+.link-area {
+	margin-top: 24px;
+	border-top: 1px solid var(--border);
+	padding-top: 18px;
+}
+
+.alert-danger {
+	background: #fef2f2;
+	color: #b91c1c;
+	border: 1px solid #fecaca;
+	padding: 12px;
+	border-radius: 9px;
+	margin-bottom: 16px;
+	font-size: 14px;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+	.add-form {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.add-form button {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 600px) {
+	#auth-section {
+		padding: 12px 4%;
+	}
+
+	.auth-container {
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.user-profile {
+		flex-wrap: wrap;
+		height: auto;
+	}
+
+	.welcome-msg {
+		display: none;
+	}
+
+	.container {
+		width: 92%;
+		padding-top: 25px;
+	}
+
+	.container h1 {
+		margin-bottom: 20px;
+	}
+
+	.search-section,
+	.form-section {
+		padding: 16px;
+	}
+
+	.filter-options {
+		gap: 8px;
+	}
+
+	.filter-options label {
+		font-size: 12px;
+	}
+
+	.add-form {
+		grid-template-columns: 1fr;
+	}
+
+	.add-form button {
+		grid-column: auto;
+	}
+
+	.food-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.form-card {
+		padding: 24px 18px;
+	}
 }

@@ -20,6 +20,9 @@ public class UserService {
             throw new RuntimeException("このユーザー名は既に使用されています。");
         }
 
+
+
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
