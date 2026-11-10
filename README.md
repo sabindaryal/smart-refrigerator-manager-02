@@ -1,0 +1,94 @@
+# スマート冷蔵庫管理システム (Smart Refrigerator Manager)
+
+食材の消費期限を可視化し、食品ロスを削減するための在庫管理アプリケーションです。  
+今回のアップデートにより、**マルチユーザー対応とセキュリティ基盤**を構築し、より実用的なシステムへと進化させました。
+
+## 1. プロジェクト概要
+日常の「冷蔵庫の中身を忘れてしまう」「期限切れで捨ててしまう」という課題を解決するために開発しました。
+単なるリスト作成ではなく、**「個人ごとのアカウント管理」**、**「期限に応じたアラート表示」**、**「リアルタイム検索」** により、安全で直感的な在庫管理を実現しています。
+
+## 2. 使用技術 (Tech Stack)
+実務を想定し、セキュリティと保守性を重視した標準的な構成を採用しています。
+
+| 分類 | 技術スタック |
+| :--- | :--- |
+| **Backend** | Java 21 / Spring Boot 3.x / **Spring Security** |
+| **Frontend** | JavaScript (Vanilla JS) / HTML5 / CSS3 |
+| **Database** | MySQL 8.x |
+| **ORM** | Spring Data JPA |
+| **Build Tool** | Maven |
+| **Authentication** | BCrypt (Password Hashing) |
+
+開発環境と本番環境の差異
+- Local quick start: H2 in-memory database (data is reset when the application stops).
+- Local demo account: username `demo`, password `Demo12345!`. The local profile seeds 20 sample foods for this account when the database is empty.
+- Optional local MySQL: activate the `mysql` profile and set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD`.
+- Production: use `application-prod.properties` and environment variables for the PostgreSQL connection.
+
+## 3. システムアーキテクチャ
+メンテナンス性と堅牢性を重視し、**Spring Securityを組み込んだ3層アーキテクチャ**を採用しています。
+
+<p align="center">
+  <img src="./image/architecture2.png" width="90%">
+</p>
+
+* **Spring Security**: 認証・認可の門番。未認証リクエストを遮断し、ログイン画面へ制御。
+* **Controller**: **単一責任の原則**に基づき、ユーザー管理（User）と食材操作（Food）の窓口を分離。
+* **Service**: ビジネスロジックの集約。ログインユーザーに紐づくデータのみを抽出するフィルタリング論理を実装。
+* **Repository**: JPAを活用したDB操作。UserとFoodの**1対多（1:N）リレーション**を管理。
+
+## 4. こだわったポイント・機能
+
+### ✅ 堅牢なセキュリティとマルチユーザー対応
+* **認証・認可基盤**: Spring Securityを導入し、パスワードはBCryptでハッシュ化して保存して、安全なログイン機能を実装しました。
+* **個別データ管理**: ログインユーザーのIDに基づき、自分自身の冷蔵庫データのみを表示・操作できる環境を構築しました。
+
+### ✅ 責務を明確にしたコード設計
+* **Controllerの分離**: 認証状態の確認用API（`/api/auth/status`）を `UserController` へ集約するなど、コードの保守性と見通しを向上させました。
+* **RESTfulなAPI設計**: フロントエンド（Vanilla JS）とバックエンド（Spring Boot）を明確に分離し、非同期通信によるスムーズな操作感を実現しました。
+
+### ✅ ユーザー体験の向上 (UX)
+* **動的な期限アラート**: 残り日数に応じて行の色を変化させ、消費の優先順位を視覚的に提示しました。
+* **カレンダー入力の最適化**: 日付入力欄のどこをクリックしてもカレンダーが表示されるようCSSを調整し、入力の手間を軽減しました。
+
+### ✅ ビジネスロジックのサーバーサイド集約を徹底
+* **Entity内での状態判定**: ドメインモデルを採用し、期限の状態判定をEntity内で行うことで、フロントエンド（JavaScript）との疎結合を実現しています。
+
+## 5. 課題解決のエピソード
+開発中、異なるエンティティ（UsersとFoods）間での相互参照による「循環参照エラー」や、ログイン後のリダイレクト制御の不備に直面しました。
+
+* **問題**: ログアウト後に一瞬だけ認証が必要な画面が表示されてしまう現象が発生しました。
+* **解決**: `SecurityConfig` のログアウト成功時の遷移先（`logoutSuccessUrl`）を、トップページではなく明確にログイン画面（`/login`）に指定することで解決しました。
+* **学び**: フレームワークのライフサイクルと、HTTPリクエストの流れを正確に把握することの重要性を痛感しました。
+
+## 6. 開発プロセス：AIとのペアプログラミング
+本プロジェクトでは、ChatGPTを**「技術顧問」**として迎え、開発を推進しました。
+
+> [!IMPORTANT]
+> **AI活用における私のポリシー**
+> 「提示されたコードを単に写す」ことはせず、**「なぜこの設計（3層構造）にするのか」「なぜこのセキュリティ設定が必要なのか」**を徹底的に議論し、全コードの意図を説明できる状態で実装しています。
+
+* **設計のブラッシュアップ**: 循環参照の回避策や、セキュリティ設定のベストプラクティスについて議論を重ね、品質を向上させました。
+* **デバッグ能力の向上**: 複雑なエラーログをAIと共に解析し、原因（型不一致や設定ミス）を特定するプロセスを通じて、解決速度を早めました。
+
+## 7. 今後の展望
+* 現在はAPI形式ですが、今後はこれをベースにReactを用いたモダンなUIへの刷新や、JUnitによる単体テストの自動化を検討しています。
+
+## 8. Release 2 enhancement scope
+
+The current enhancement adds:
+
+* English and Japanese interface text, with a per-user language preference.
+* A waste history. Recording waste reduces the active stock and creates a user-owned history event in one transaction.
+* Inventory-aware menu suggestions. The local ingredient matcher works without an external service. An optional OpenAI-compatible chat-completions provider can be enabled with `AI_API_KEY`, `AI_API_URL` and `AI_MODEL`. When enabled, inventory names, categories and quantities are sent to that provider; do not enable it until the project has an appropriate privacy notice and provider configuration.
+* Email-based registration, editable display name/language profile, and a single-use, 10-minute password reset code.
+
+Configure SMTP with the standard `spring.mail.*` properties and provide credentials through environment variables or a secret manager. If SMTP is not configured, reset codes are written to the application log for local development only. This fallback is not suitable for production.
+
+Use Java 21 as specified by `pom.xml`. Start the local H2 version with `./mvnw spring-boot:run` (or `sh mvnw spring-boot:run` if the wrapper is not executable). To use configured MySQL, run `sh mvnw spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=mysql`. The Flutter QR scanning application remains outside this release. See `output/pdf/Smart-Refrigerator-Agile-Project-Pack.pdf` for the backlog and requirements plan, and `output/pdf/Smart-Refrigerator-Development-Activity-Record.pdf` for current activity and outstanding evidence.
+
+## アップデート情報 (2026/01)
+- **UI/UXの改善**: モバイル端末での日付選択時の挙動を安定させるため、自動保存から「保存ボタン」による手動更新へUIを変更。
+- **セキュリティと安定性の向上**: 
+    - 本番環境（HTTPS）におけるセッション維持のため、SameSite属性を最適化。
+    - APIリクエスト時の厳密なユーザー所有権チェックを実装し、データの堅牢性を向上。

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Refrigerator</title><link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"><meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}">
+</head>
+<body class="dashboard-body">
+  <header class="topbar"><div class="topbar-inner">
+    <a class="brand-lockup dashboard-brand" href="/"><span class="brand-icon">◉</span><span data-i18n="brandName">Fridge</span></a>
+    <div class="user-profile" id="user-info" style="display:none">
+      <span class="welcome-user"><span class="user-avatar">●</span><span id="display-username" class="username"></span></span>
+      <button id="profileToggle" class="text-button" data-i18n="profile">Profile</button>
+      <select id="languageSelect" aria-label="Language" data-i18n-aria="preferredLanguage"><option value="ja">日本語</option><option value="en">English</option></select>
+      <button onclick="handleLogout()" class="logout-btn" data-i18n="logout">Sign out</button>
+    </div>
+    <a id="loginLink" class="text-button" href="/login" style="display:none" data-i18n="loginButton">Sign in</a>
+  </div></header>
+  <main class="dashboard-container">
+    <section class="hero-heading"><div><p class="eyebrow" data-i18n="authEyebrow">SMART REFRIGERATOR</p><h1 data-i18n="greeting">Your kitchen, at a glance</h1><p data-i18n="dashboardSubtitle">Know what is fresh, what to use next, and what to make.</p></div><div class="hero-orb"><span>✳</span></div></section>
+    <section id="profilePanel" class="profile-panel" hidden><div class="panel-heading"><div><p class="eyebrow" data-i18n="profile">Profile</p><h2 data-i18n="profileTitle">Profile settings</h2></div><button type="button" class="icon-button" onclick="toggleProfile()" aria-label="Close profile" data-i18n-aria="close">×</button></div><form id="profileForm" class="profile-form"><div class="field"><label for="displayName" data-i18n="displayName">Display name</label><input id="displayName" maxlength="60" required></div><div class="field"><label for="profileEmail" data-i18n="emailReadOnly">Email address</label><input id="profileEmail" disabled></div><div class="field"><label for="profileLanguage" data-i18n="preferredLanguage">Language</label><select id="profileLanguage"><option value="ja">日本語</option><option value="en">English</option></select></div><button type="submit" class="primary-button" data-i18n="saveProfile">Save changes</button></form></section>
+    <section class="metric-grid" aria-label="Inventory summary" data-i18n-aria="metricSummary"><article class="metric-card metric-primary"><span class="metric-icon">▦</span><div><p data-i18n="totalItems">Items tracked</p><strong id="totalCount">0</strong></div><small data-i18n="foodCount">items in your fridge</small></article><article class="metric-card"><span class="metric-icon warm">◷</span><div><p data-i18n="expiringCount">Expiring soon</p><strong id="expiringCount">0</strong></div><small data-i18n="expiring">Expiring soon</small></article><article class="metric-card"><span class="metric-icon lilac">↘</span><div><p data-i18n="wasteCount">Items discarded</p><strong id="wasteCount">0</strong></div><small data-i18n="wasteHistory">Waste history</small></article></section>
+    <div class="dashboard-grid">
+      <section class="dashboard-main">
+        <section class="inventory-toolbar"><div><p class="eyebrow" data-i18n="greeting">Your kitchen</p><h2 data-i18n="inventory">Your inventory</h2></div><div class="search-wrap"><span>⌕</span><input type="search" id="searchInput" placeholder="Search food or category" oninput="filterFoods()" data-i18n-placeholder="search"></div></section>
+        <section id="add-form-container" class="add-panel" style="display:none"><div class="panel-heading"><div><p class="eyebrow" data-i18n="addFood">Add to your fridge</p><h2 data-i18n="foodName">Food name</h2></div><span class="add-sparkle">＋</span></div><div class="add-form"><div class="field"><label for="foodName" data-i18n="foodName">Food name</label><input type="text" id="foodName" placeholder="e.g. Avocado" data-i18n-placeholder="foodNamePlaceholder"></div><div class="field"><label for="addQuantity" data-i18n="quantity">Quantity</label><input type="number" id="addQuantity" value="1" min="1" aria-label="Quantity" data-i18n-aria="quantity"></div><div class="field"><label for="expiryDate" data-i18n="expiryDate">Best before</label><input type="date" id="expiryDate" aria-label="Best before" data-i18n-aria="expiryDate"></div><div class="field"><label for="category" data-i18n="category">Category</label><select id="category"><option value="野菜" data-i18n="vegetables">Vegetables</option><option value="肉・魚" data-i18n="meatFish">Meat & fish</option><option value="調味料" data-i18n="condiments">Condiments</option><option value="乳製品" data-i18n="dairy">Dairy</option><option value="パン・ご飯" data-i18n="breadRice">Bread & rice</option><option value="果物" data-i18n="fruit">Fruit</option><option value="その他" data-i18n="other">Other</option></select></div><button onclick="addFood()" class="primary-button add-button" data-i18n="add">Add item</button></div></section>
+        <section class="filter-row"><label><input type="checkbox" id="filterRestock" onchange="filterFoods()"><span data-i18n="restock">Restock</span></label><label><input type="checkbox" id="filterNoStock" onchange="filterFoods()"><span data-i18n="outOfStock">Out of stock</span></label><label><input type="checkbox" id="filterWarning" onchange="filterFoods()"><span data-i18n="expiring">Expiring soon</span></label><label><input type="checkbox" id="filterDanger" onchange="filterFoods()"><span data-i18n="expired">Expired</span></label></section>
+        <div id="foodList" class="food-grid"></div>
+      </section>
+      <aside class="dashboard-side">
+        <section class="side-card ai-card"><div class="side-card-heading"><div class="ai-mark">✳</div><div><p class="eyebrow" data-i18n="aiLabel">AI MENU IDEAS</p><h2 data-i18n="menuIdeas">Made from what you have</h2></div><button class="icon-button" onclick="loadSuggestions()" aria-label="Refresh suggestions" data-i18n-aria="refresh">↻</button></div><p class="helper-text" data-i18n="suggestionNote">Ideas are matched to ingredients already in your fridge.</p><div id="suggestions" class="suggestion-list"></div></section>
+        <section class="side-card waste-card"><div class="side-card-heading"><div><p class="eyebrow" data-i18n="trackWaste">LESS WASTE</p><h2 data-i18n="wasteHistory">Waste history</h2></div><button class="text-button" onclick="loadWasteHistory()" data-i18n="refresh">Refresh</button></div><div id="wasteHistory" class="history-list"></div></section>
+      </aside>
+    </div>
+  </main>
+  <script src="/js/i18n.js"></script><script src="/js/app.js"></script>
+</body>
+</html>
